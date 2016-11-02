@@ -1,6 +1,7 @@
 var canvas = document.getElementById('canvas');
 var context = canvas.getContext('2d');
-var planets = [{X: 100, Y: 100, RADIUS: 25}];
+var stars = [{LOCATION: {X: 100, Y: 100}, RADIUS: 25}];
+var planets = [{LOCATION: {X: 125, Y: 125}, RADIUS: 5}];
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
@@ -42,14 +43,27 @@ function draw(){
     for(var p = 0; p < planets.length; p++){
         var planet = planets[p];
 
-        console.log("HERE");
-
         context.beginPath();
         context.fillStyle = 'green';
-        context.arc(planet.X, planet.Y, planet.RADIUS, 0 , 2 * Math.PI);
+        context.arc(planet.LOCATION.X, planet.LOCATION.Y, planet.RADIUS, 0 , 2 * Math.PI);
+        context.fill();
+        context.stroke();
+
+        console.log(calculateForce(planet, stars[0]));
+    }
+
+    for(var s = 0; s < stars.length; s++){
+        var star = stars[s];
+
+        context.beginPath();
+        context.fillStyle = 'black';
+        context.arc(star.LOCATION.X, star.LOCATION.Y, star.RADIUS, 0 , 2 * Math.PI);
         context.fill();
         context.stroke();
     }
+
+
+    console.log(calculateDistance(planets[0].LOCATION, stars[0].LOCATION));
 }
 
 function update(){
@@ -57,15 +71,17 @@ function update(){
 }
 
 const GRAVITY = 9.8;
-function calculateForce(pRadius, sRadius){
-    return GRAVITY * calculateMass(pRadius) * calculateMass(sRadius) / (sRadius * pRadius);
+function calculateForce(planet, star){
+    return GRAVITY * calculateMass(star.RADIUS) * calculateMass(planet.RADIUS) / Math.pow(calculateDistance(planet.LOCATION, star.LOCATION), 2);
 }
 
 function calculateMass(radius){
     return Math.abs(Math.pow(Math.pow(radius, 5), 1/4));
 }
 
-console.dir(calculateForce(5, 25 ));
-console.dir(calculateMass(25));
+function calculateDistance(locOne, locTwo){
+    return Math.sqrt(Math.pow(locTwo.X - locOne.X, 2) + Math.pow(locTwo.Y - locOne.Y, 2));
+};
+
 
 requestAnimationFrame(render);
