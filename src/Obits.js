@@ -1,7 +1,7 @@
 var canvas = document.getElementById('canvas');
 var context = canvas.getContext('2d');
 var stars = [{LOCATION: {X: 100, Y: 100}, RADIUS: 25}];
-var planets = [{LOCATION: {X: 125, Y: 125}, RADIUS: 5}];
+var planets = [{LOCATION: {X: 15, Y: 25}, VELOCITY: {X: 1, Y: 0}, RADIUS: 5}];
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
@@ -40,6 +40,8 @@ function render() {
 }
 
 function draw(){
+    clearCanvas();
+
     for(var p = 0; p < planets.length; p++){
         var planet = planets[p];
 
@@ -49,6 +51,9 @@ function draw(){
         context.fill();
         context.stroke();
 
+        planet.LOCATION.X += planet.VELOCITY.X;
+        planet.LOCATION.Y += planet.VELOCITY.Y;
+
         console.log(calculateForce(planet, stars[0]));
     }
 
@@ -56,7 +61,7 @@ function draw(){
         var star = stars[s];
 
         context.beginPath();
-        context.fillStyle = 'black';
+        context.fillStyle = 'red';
         context.arc(star.LOCATION.X, star.LOCATION.Y, star.RADIUS, 0 , 2 * Math.PI);
         context.fill();
         context.stroke();
@@ -64,6 +69,11 @@ function draw(){
 
 
     console.log(calculateDistance(planets[0].LOCATION, stars[0].LOCATION));
+}
+
+function clearCanvas() {
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.beginPath();
 }
 
 function update(){
